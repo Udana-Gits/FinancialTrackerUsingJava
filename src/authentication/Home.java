@@ -79,7 +79,7 @@ public class Home extends javax.swing.JFrame {
                 jButton2ActionPerformed(evt);
             }
         });
-        getContentPane().add(jButton2, new org.netbeans.lib.awtextra.AbsoluteConstraints(450, 740, 120, 40));
+        getContentPane().add(jButton2, new org.netbeans.lib.awtextra.AbsoluteConstraints(450, 770, 120, 40));
 
         jButton3.setFont(new java.awt.Font("Dialog", 1, 18)); // NOI18N
         jButton3.setText("Income");
