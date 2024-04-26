@@ -5,6 +5,14 @@
  */
 package authentication;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.JOptionPane;
+
 /**
  *
  * @author Hp
@@ -14,6 +22,8 @@ public class Transactions extends javax.swing.JFrame {
     /**
      * Creates new form Transactions
      */
+    DB db = new DB();
+    
     public Transactions() {
         initComponents();
     }
@@ -210,7 +220,41 @@ public class Transactions extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        // TODO add your handling code here:
+        //  String sql = "SELECT * FROM `login`"; // Provide a valid SQL query to retrieve data
+         String sql = "SELECT Name FROM login WHERE Account_Number = ? ";
+         
+         String acc_no_text = jTextField2.getText();
+        int accnm = Integer.parseInt(acc_no_text);
+         
+         
+        try {
+            Connection cn = db.getCon();
+            PreparedStatement pstmt = cn.prepareStatement(sql);
+
+            pstmt.setInt(1, accnm); 
+
+            ResultSet rs = pstmt.executeQuery();
+
+            if (rs.next()) {
+
+                String name = rs.getString("Name");
+
+                // Display the name in a text field (assuming jTextField1 is the text field)
+                jTextField3.setText(name);
+
+            } else {
+                // If no row is found, the username or password is incorrect
+                System.out.println("Invalid Account Number");
+            }
+
+            // Close the ResultSet, PreparedStatement, and Connection
+            rs.close();
+            pstmt.close();
+            cn.close();
+            
+        }catch (SQLException ex) {
+            Logger.getLogger(Login.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void jTextField1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField1ActionPerformed
@@ -218,7 +262,45 @@ public class Transactions extends javax.swing.JFrame {
     }//GEN-LAST:event_jTextField1ActionPerformed
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
-        // TODO add your handling code here:
+         //  String sql = "SELECT * FROM `login`"; // Provide a valid SQL query to retrieve data
+         String sql1 = "SELECT * FROM login WHERE Account_Number = ? ";
+         
+         String acc_no_text = jTextField2.getText();
+         int accnm = Integer.parseInt(acc_no_text);
+         String amount_text = jTextField2.getText();
+         int amount = Integer.parseInt(amount_text);
+         
+         
+        try {
+            Connection cn = db.getCon();
+            PreparedStatement pstmt = cn.prepareStatement(sql1);
+
+            pstmt.setInt(1, accnm); 
+
+            ResultSet rs = pstmt.executeQuery();
+
+            if (rs.next()) {
+
+                int balance = rs.getInt("Balance");
+                balance = balance + amount ;
+                
+                String sql2 = "UPDATE login SET salary = ? WHERE Account_Number = ?'";
+                pstmt.setInt(1, balance); 
+                pstmt.setInt(2, accnm);    
+
+            } else {
+                // If no row is found, the username or password is incorrect
+                System.out.println("Invalid Account Number");
+            }
+
+            // Close the ResultSet, PreparedStatement, and Connection
+            rs.close();
+            pstmt.close();
+            cn.close();
+            
+        }catch (SQLException ex) {
+            Logger.getLogger(Login.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void jTextField3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField3ActionPerformed
