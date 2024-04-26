@@ -9,6 +9,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 
 /**
@@ -137,33 +138,55 @@ public class Register extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    int accnum;
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
 //        this.dispose();
 //        Login l1 = new Login();
 //        l1.setVisible(true);
-        
+       
         String name = jTextField2.getText();
         String email = jTextField1.getText();
         String password = jPasswordField1.getText();
         String hashedPassword = hashPassword(password);
-        String query = "INSERT INTO login (name, email, password) VALUES (?, ?, ?)";
-        
+
+        String queryInsert = "INSERT INTO login (name, email, password, Account_Number) VALUES (?, ?, ?, ?)";
+        String queryMax = "SELECT MAX(Account_Number) AS max_account FROM login";
+
         DB ob = new DB();
         Connection con = ob.getCon();
-        try (PreparedStatement pstmt = con.prepareStatement(query)) {
-            pstmt.setString(1, name);
-            pstmt.setString(2, email);
-            pstmt.setString(3, hashedPassword);
-            
-            int rowsAffected = pstmt.executeUpdate();
-            if (rowsAffected > 0) {
-                System.out.println("User added successfully!");
+
+        try (PreparedStatement pstmtInsert = con.prepareStatement(queryInsert);
+             PreparedStatement pstmtMax = con.prepareStatement(queryMax)) {
+
+    
+        // Retrieve maximum value
+        try (ResultSet resultSet = pstmtMax.executeQuery()) {
+            if (resultSet.next()) {
+                int largestValue = resultSet.getInt("max_account");
+                 accnum = largestValue + 11;
             } else {
-                System.out.println("Failed to add user.");
+                accnum = 100110525;
             }
-        } catch (SQLException ex) {
-            System.out.println("Error adding user: " + ex.getMessage());
         }
+        String account = String.valueOf(accnum);
+        // Insert data
+        pstmtInsert.setString(1, name);
+        pstmtInsert.setString(2, email);
+        pstmtInsert.setString(3, hashedPassword);
+        pstmtInsert.setString(4, account);
+
+        int rowsAffected = pstmtInsert.executeUpdate();
+        if (rowsAffected > 0) {
+            System.out.println("User added successfully!");
+        } else {
+            System.out.println("Failed to add user.");
+        }
+
+
+    } catch (SQLException ex) {
+        System.out.println("Error: " + ex.getMessage());
+    }
+
     
     }//GEN-LAST:event_jButton1ActionPerformed
 
