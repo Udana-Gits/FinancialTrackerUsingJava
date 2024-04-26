@@ -161,11 +161,15 @@ public class Register extends javax.swing.JFrame {
         try (ResultSet resultSet = pstmtMax.executeQuery()) {
             if (resultSet.next()) {
                 int largestValue = resultSet.getInt("max_account");
+                if(largestValue!=0){
                  accnum = largestValue + 11;
-            } else {
-                accnum = 100110525;
-            }
+                }else{
+                    accnum = 100110525;
+                }
+                 
+            } 
         }
+        
         String account = String.valueOf(accnum);
         // Insert data
         pstmtInsert.setString(1, name);
