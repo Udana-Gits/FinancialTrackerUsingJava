@@ -16,6 +16,7 @@ public class Login extends javax.swing.JFrame {
 
     DB db = new DB();
     
+    
     public Login() {
         initComponents();
     }
@@ -101,15 +102,17 @@ public class Login extends javax.swing.JFrame {
         try {
         Connection cn = db.getCon();
         PreparedStatement pstmt = cn.prepareStatement(sql);
-        pstmt.setString(1, username.getText()); // Assuming username.getText() retrieves the entered username
+        String email = username.getText();
+        pstmt.setString(1,email); // Assuming username.getText() retrieves the entered username
         pstmt.setString(2, hashpw); // Assuming jPassword.getText() retrieves the entered password
         ResultSet rs = pstmt.executeQuery();
 
         if (rs.next()) {
             // If a row is found, the username and password are correct
             JOptionPane.showMessageDialog(null, "Login Successful!");
+
             this.dispose();
-            Home h1 = new Home();
+            Home h1 = new Home(email);
             h1.setVisible(true);
         } else {
             // If no row is found, the username or password is incorrect
@@ -123,6 +126,7 @@ public class Login extends javax.swing.JFrame {
     } catch (SQLException ex) {
         Logger.getLogger(Login.class.getName()).log(Level.SEVERE, null, ex);
     }
+        
     }//GEN-LAST:event_loginActionPerformed
 
     private void registerActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_registerActionPerformed

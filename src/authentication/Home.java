@@ -5,6 +5,13 @@
  */
 package authentication;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 /**
  *
  * @author Hp
@@ -14,8 +21,17 @@ public class Home extends javax.swing.JFrame {
     /**
      * Creates new form Home
      */
+    private String Email ;
+    
     public Home() {
         initComponents();
+        
+    }
+    public Home(String email){
+        this.Email = email ;
+        initComponents();
+        loadData();
+
     }
 
     /**
@@ -40,6 +56,7 @@ public class Home extends javax.swing.JFrame {
         jLabel9 = new javax.swing.JLabel();
         jLabel10 = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
+        jLabel7 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setMaximumSize(new java.awt.Dimension(652, 829));
@@ -53,7 +70,7 @@ public class Home extends javax.swing.JFrame {
 
         jLabel2.setFont(new java.awt.Font("Dialog", 1, 20)); // NOI18N
         jLabel2.setText("WELCOME BACK");
-        getContentPane().add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 70, 336, 49));
+        getContentPane().add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 90, 170, 49));
 
         jLabel3.setFont(new java.awt.Font("Dialog", 1, 18)); // NOI18N
         jLabel3.setText("EXPENCES");
@@ -116,12 +133,55 @@ public class Home extends javax.swing.JFrame {
         getContentPane().add(jLabel10, new org.netbeans.lib.awtextra.AbsoluteConstraints(190, 270, 180, 49));
 
         jLabel4.setFont(new java.awt.Font("Dialog", 1, 18)); // NOI18N
-        jLabel4.setText("Account Number :");
+        jLabel4.setText("Account Number :  ");
         getContentPane().add(jLabel4, new org.netbeans.lib.awtextra.AbsoluteConstraints(310, 170, 320, -1));
+
+        jLabel7.setFont(new java.awt.Font("Dialog", 1, 20)); // NOI18N
+        getContentPane().add(jLabel7, new org.netbeans.lib.awtextra.AbsoluteConstraints(190, 90, 150, 50));
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+    public void loadData(){
+        
+           
+            DB db = new DB();
+            String email = Email ;
+            String sql = "SELECT * FROM login WHERE Email = ? ";
+        try {
+            Connection cn = db.getCon();
+            PreparedStatement pstmt = cn.prepareStatement(sql);
 
+            pstmt.setString(1, Email); 
+
+            ResultSet rs = pstmt.executeQuery();
+
+            if (rs.next()) {
+
+                String name = rs.getString("Name");
+                String accnm = rs.getString("Account_number");
+                String balance = rs.getString("Balance");
+
+                // Display the name in a text field (assuming jTextField1 is the text field)
+                jLabel7.setText(name);
+                jLabel8.setText("Rs."+balance);
+                jLabel9.setText("Rs."+balance);
+                jLabel10.setText("Rs."+balance);
+                jLabel4.setText("Account Number"+accnm);
+
+            } else {
+                // If no row is found, the username or password is incorrect
+                System.out.println("Invalid Account Number");
+            }
+
+            // Close the ResultSet, PreparedStatement, and Connection
+            rs.close();
+            pstmt.close();
+            cn.close();
+            
+        }catch (SQLException ex) {
+            Logger.getLogger(Login.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_jButton1ActionPerformed
@@ -171,7 +231,7 @@ public class Home extends javax.swing.JFrame {
                 //new Home().setVisible(true);
                 Home h1 = new Home();
                 h1.setVisible(true);
-                h1.setSize(652,829);
+                h1.setSize(652,868);
             }
         });
     }
@@ -188,6 +248,7 @@ public class Home extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
+    private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
     // End of variables declaration//GEN-END:variables
