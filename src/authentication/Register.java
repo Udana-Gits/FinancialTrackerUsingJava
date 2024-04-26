@@ -11,6 +11,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import javax.swing.JOptionPane;
 
 /**
  *
@@ -164,53 +165,63 @@ public class Register extends javax.swing.JFrame {
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
 //        this.dispose();
 //        Login l1 = new Login();
-//        l1.setVisible(true);
+//        l1.setVisible(true); 
         String name = jTextField2.getText();
         String email = jTextField1.getText();
         String password = jPasswordField1.getText();
+        String conPassword = jPasswordField2.getText();
         String hashedPassword = hashPassword(password);
 
-        String queryInsert = "INSERT INTO login (name, email, password, Account_Number) VALUES (?, ?, ?, ?)";
-        String queryMax = "SELECT MAX(Account_Number) AS max_account FROM login";
+        if(!name.isEmpty() && !email.isEmpty() && !password.isEmpty()&& !conPassword.isEmpty()){
+            if(password.equals(conPassword)){
+                    String queryInsert = "INSERT INTO login (name, email, password, Account_Number) VALUES (?, ?, ?, ?)";
+                    String queryMax = "SELECT MAX(Account_Number) AS max_account FROM login";
 
-        DB ob = new DB();
-        Connection con = ob.getCon();
+                    DB ob = new DB();
+                    Connection con = ob.getCon();
 
-        try (PreparedStatement pstmtInsert = con.prepareStatement(queryInsert);
-             PreparedStatement pstmtMax = con.prepareStatement(queryMax)) {
+                    try (PreparedStatement pstmtInsert = con.prepareStatement(queryInsert);
+                         PreparedStatement pstmtMax = con.prepareStatement(queryMax)) {
 
-    
-        // Retrieve maximum value
-        try (ResultSet resultSet = pstmtMax.executeQuery()) {
-            if (resultSet.next()) {
-                int largestValue = resultSet.getInt("max_account");
-                if(largestValue!=0){
-                 accnum = largestValue + 11;
-                }else{
-                    accnum = 100110525;
+
+                    // Retrieve maximum value
+                    try (ResultSet resultSet = pstmtMax.executeQuery()) {
+                        if (resultSet.next()) {
+                            int largestValue = resultSet.getInt("max_account");
+                            if(largestValue!=0){
+                             accnum = largestValue + 11;
+                            }else{
+                                accnum = 100110525;
+                            }
+
+                        } 
+                    }
+
+                    String account = String.valueOf(accnum);
+                    // Insert data
+                    pstmtInsert.setString(1, name);
+                    pstmtInsert.setString(2, email);
+                    pstmtInsert.setString(3, hashedPassword);
+                    pstmtInsert.setString(4, account);
+
+                    int rowsAffected = pstmtInsert.executeUpdate();
+                    if (rowsAffected > 0) {
+                        System.out.println("User added successfully!");
+                    } else {
+                        System.out.println("Failed to add user.");
+                    }
+
+
+                } catch (SQLException ex) {
+                    System.out.println("Error: " + ex.getMessage());
                 }
-                 
-            } 
+            }
+            else{
+               JOptionPane.showMessageDialog(null, "Paswwords are not same!", "Alert", JOptionPane.WARNING_MESSAGE); 
+            }
+    }else{
+            JOptionPane.showMessageDialog(null, "Please fill all the fields", "Alert", JOptionPane.WARNING_MESSAGE);
         }
-        
-        String account = String.valueOf(accnum);
-        // Insert data
-        pstmtInsert.setString(1, name);
-        pstmtInsert.setString(2, email);
-        pstmtInsert.setString(3, hashedPassword);
-        pstmtInsert.setString(4, account);
-
-        int rowsAffected = pstmtInsert.executeUpdate();
-        if (rowsAffected > 0) {
-            System.out.println("User added successfully!");
-        } else {
-            System.out.println("Failed to add user.");
-        }
-
-
-    } catch (SQLException ex) {
-        System.out.println("Error: " + ex.getMessage());
-    }
     
     }//GEN-LAST:event_jButton1ActionPerformed
 
