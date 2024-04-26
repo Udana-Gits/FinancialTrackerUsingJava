@@ -21,14 +21,14 @@ public class Home extends javax.swing.JFrame {
     /**
      * Creates new form Home
      */
-    private String Email ;
+    private int UserId ;
     
     public Home() {
         initComponents();
         
     }
-    public Home(String email){
-        this.Email = email ;
+    public Home(int userId){
+        this.UserId = userId ;
         initComponents();
         loadData();
 
@@ -145,13 +145,13 @@ public class Home extends javax.swing.JFrame {
         
            
             DB db = new DB();
-            String email = Email ;
-            String sql = "SELECT * FROM login WHERE Email = ? ";
+            int userId = UserId ;
+            String sql = "SELECT * FROM login WHERE ID = ? ";
         try {
             Connection cn = db.getCon();
             PreparedStatement pstmt = cn.prepareStatement(sql);
 
-            pstmt.setString(1, Email); 
+            pstmt.setInt(1, UserId); 
 
             ResultSet rs = pstmt.executeQuery();
 
@@ -166,7 +166,7 @@ public class Home extends javax.swing.JFrame {
                 jLabel8.setText("Rs."+balance);
                 jLabel9.setText("Rs."+balance);
                 jLabel10.setText("Rs."+balance);
-                jLabel4.setText("Account Number"+accnm);
+                jLabel4.setText("Account Number : "+accnm);
 
             } else {
                 // If no row is found, the username or password is incorrect
@@ -184,14 +184,25 @@ public class Home extends javax.swing.JFrame {
     }
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         // TODO add your handling code here:
+        this.dispose();
+        Transactions t1 =  new Transactions(UserId);
+        t1.setVisible(true);
+        t1.setSize(652,868);
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
-        // TODO add your handling code here:
+            this.dispose();
+            Login l1 = new Login();
+            l1.setVisible(true);
+            l1.setSize(652,868);
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
         // TODO add your handling code here:
+        this.hide();
+        Income i1 =  new Income();
+        i1.setVisible(true);
+        i1.setSize(652,868);
     }//GEN-LAST:event_jButton3ActionPerformed
 
     private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed

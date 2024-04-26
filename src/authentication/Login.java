@@ -68,7 +68,7 @@ public class Login extends javax.swing.JFrame {
                 loginActionPerformed(evt);
             }
         });
-        getContentPane().add(login, new org.netbeans.lib.awtextra.AbsoluteConstraints(290, 270, -1, -1));
+        getContentPane().add(login, new org.netbeans.lib.awtextra.AbsoluteConstraints(290, 260, -1, -1));
 
         register.setFont(new java.awt.Font("Dialog", 1, 18)); // NOI18N
         register.setText("Register");
@@ -104,15 +104,16 @@ public class Login extends javax.swing.JFrame {
         PreparedStatement pstmt = cn.prepareStatement(sql);
         String email = username.getText();
         pstmt.setString(1,email); // Assuming username.getText() retrieves the entered username
-        pstmt.setString(2, hashpw); // Assuming jPassword.getText() retrieves the entered password
+        pstmt.setString(2, hashpw); // Assuming jPassword.getText() retrieves the entered password^
         ResultSet rs = pstmt.executeQuery();
 
         if (rs.next()) {
             // If a row is found, the username and password are correct
             JOptionPane.showMessageDialog(null, "Login Successful!");
+            int userId = rs.getInt("ID");
 
             this.dispose();
-            Home h1 = new Home(email);
+            Home h1 = new Home(userId);
             h1.setVisible(true);
         } else {
             // If no row is found, the username or password is incorrect
@@ -193,7 +194,7 @@ public class Login extends javax.swing.JFrame {
                 //new Login().setVisible(true);
                 Login log1 = new Login();
                 log1.setVisible(true);
-                log1.setSize(500, 500);
+                log1.setSize(652, 829);
             }
         });
     }
