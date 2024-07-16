@@ -135,6 +135,7 @@ public class Login extends javax.swing.JFrame {
         this.dispose();
         Register R1 = new Register();
         R1.setVisible(true);
+        System.out.println("");
       
     }//GEN-LAST:event_registerActionPerformed
 
