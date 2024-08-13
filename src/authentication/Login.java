@@ -16,8 +16,11 @@ public class Login extends javax.swing.JFrame {
 
     DB db = new DB();
     
+    
     public Login() {
         initComponents();
+        getRootPane().setDefaultButton(login);
+
     }
 
     /**
@@ -36,21 +39,26 @@ public class Login extends javax.swing.JFrame {
         login = new javax.swing.JButton();
         register = new javax.swing.JButton();
         jPassword = new javax.swing.JPasswordField();
+        jLabel1 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setPreferredSize(new java.awt.Dimension(650, 990));
         getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         pass.setFont(new java.awt.Font("Dialog", 1, 18)); // NOI18N
+        pass.setForeground(new java.awt.Color(0, 0, 0));
         pass.setText("Password");
-        getContentPane().add(pass, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 180, 130, 30));
+        getContentPane().add(pass, new org.netbeans.lib.awtextra.AbsoluteConstraints(120, 630, 130, 30));
 
         username1.setFont(new java.awt.Font("Dialog", 1, 48)); // NOI18N
         username1.setText("User LogIn");
-        getContentPane().add(username1, new org.netbeans.lib.awtextra.AbsoluteConstraints(110, 10, 260, 60));
+        getContentPane().add(username1, new org.netbeans.lib.awtextra.AbsoluteConstraints(200, 440, 260, 60));
 
+        user.setBackground(new java.awt.Color(153, 0, 0));
         user.setFont(new java.awt.Font("Dialog", 1, 18)); // NOI18N
+        user.setForeground(new java.awt.Color(0, 0, 0));
         user.setText("User Name");
-        getContentPane().add(user, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 110, 130, 30));
+        getContentPane().add(user, new org.netbeans.lib.awtextra.AbsoluteConstraints(120, 560, 130, 30));
 
         username.setFont(new java.awt.Font("Dialog", 1, 18)); // NOI18N
         username.addActionListener(new java.awt.event.ActionListener() {
@@ -58,7 +66,7 @@ public class Login extends javax.swing.JFrame {
                 usernameActionPerformed(evt);
             }
         });
-        getContentPane().add(username, new org.netbeans.lib.awtextra.AbsoluteConstraints(160, 110, 210, -1));
+        getContentPane().add(username, new org.netbeans.lib.awtextra.AbsoluteConstraints(250, 560, 210, -1));
 
         login.setFont(new java.awt.Font("Dialog", 1, 18)); // NOI18N
         login.setText("LOGIN");
@@ -67,7 +75,7 @@ public class Login extends javax.swing.JFrame {
                 loginActionPerformed(evt);
             }
         });
-        getContentPane().add(login, new org.netbeans.lib.awtextra.AbsoluteConstraints(290, 270, -1, -1));
+        getContentPane().add(login, new org.netbeans.lib.awtextra.AbsoluteConstraints(430, 750, -1, -1));
 
         register.setFont(new java.awt.Font("Dialog", 1, 18)); // NOI18N
         register.setText("Register");
@@ -76,14 +84,21 @@ public class Login extends javax.swing.JFrame {
                 registerActionPerformed(evt);
             }
         });
-        getContentPane().add(register, new org.netbeans.lib.awtextra.AbsoluteConstraints(290, 330, -1, -1));
+        getContentPane().add(register, new org.netbeans.lib.awtextra.AbsoluteConstraints(260, 830, -1, -1));
 
         jPassword.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jPasswordActionPerformed(evt);
             }
         });
-        getContentPane().add(jPassword, new org.netbeans.lib.awtextra.AbsoluteConstraints(160, 180, 210, 30));
+        getContentPane().add(jPassword, new org.netbeans.lib.awtextra.AbsoluteConstraints(250, 630, 210, 30));
+
+        jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/authentication/New Project (4).png"))); // NOI18N
+        jLabel1.setText("jLabel1");
+        jLabel1.setMaximumSize(new java.awt.Dimension(650, 900));
+        jLabel1.setMinimumSize(new java.awt.Dimension(650, 900));
+        jLabel1.setPreferredSize(new java.awt.Dimension(650, 900));
+        getContentPane().add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, -30, 650, 960));
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
@@ -97,23 +112,30 @@ public class Login extends javax.swing.JFrame {
          String sql = "SELECT * FROM login WHERE Email = ? AND Password = ?";
          
          String hashpw = hashPassword(jPassword.getText());
+         String email = username.getText();
+         
+         if(!email.isEmpty()&&!hashpw.isEmpty()){
          //  String hashpw = hashPassword(ps1);
         try {
         Connection cn = db.getCon();
         PreparedStatement pstmt = cn.prepareStatement(sql);
-        pstmt.setString(1, username.getText()); // Assuming username.getText() retrieves the entered username
-        pstmt.setString(2, hashpw); // Assuming jPassword.getText() retrieves the entered password
+        pstmt.setString(1,email); // Assuming username.getText() retrieves the entered username
+        pstmt.setString(2, hashpw); // Assuming jPassword.getText() retrieves the entered password^
         ResultSet rs = pstmt.executeQuery();
-
+        
         if (rs.next()) {
             // If a row is found, the username and password are correct
             JOptionPane.showMessageDialog(null, "Login Successful!");
+            int userId = rs.getInt("ID");
+            
             this.dispose();
-            Home h1 = new Home();
+            Home h1 = new Home(userId);
             h1.setVisible(true);
+            h1.setSize(650, 900);
         } else {
             // If no row is found, the username or password is incorrect
             System.out.println("Invalid Username or Password");
+            JOptionPane.showMessageDialog(null, "Invalid Username or Password");
         }
 
         // Close the ResultSet, PreparedStatement, and Connection
@@ -123,6 +145,11 @@ public class Login extends javax.swing.JFrame {
     } catch (SQLException ex) {
         Logger.getLogger(Login.class.getName()).log(Level.SEVERE, null, ex);
     }
+    
+    }else{
+             JOptionPane.showMessageDialog(null, "Please enter email and password");
+         }
+        
     }//GEN-LAST:event_loginActionPerformed
 
     private void registerActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_registerActionPerformed
@@ -130,6 +157,8 @@ public class Login extends javax.swing.JFrame {
         this.dispose();
         Register R1 = new Register();
         R1.setVisible(true);
+        R1.setSize(650, 900);
+        R1.setResizable(false);
       
     }//GEN-LAST:event_registerActionPerformed
 
@@ -187,14 +216,16 @@ public class Login extends javax.swing.JFrame {
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
                 //new Login().setVisible(true);
-                Login log = new Login();
-                log.setVisible(true);
-                log.setSize(500, 500);
+                Login log1 = new Login();
+                log1.setVisible(true);
+                log1.setSize(650, 900);
+                log1.setResizable(false);
             }
         });
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JLabel jLabel1;
     private javax.swing.JPasswordField jPassword;
     private javax.swing.JButton login;
     private javax.swing.JLabel pass;

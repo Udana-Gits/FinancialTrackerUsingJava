@@ -5,6 +5,13 @@
  */
 package authentication;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 /**
  *
  * @author Hp
@@ -14,8 +21,18 @@ public class Home extends javax.swing.JFrame {
     /**
      * Creates new form Home
      */
+    private int UserId ;
+    private float bal;
+    
     public Home() {
         initComponents();
+        
+    }
+    public Home(int userId){
+        this.UserId = userId ;
+        initComponents();
+        loadData();
+
     }
 
     /**
@@ -40,6 +57,8 @@ public class Home extends javax.swing.JFrame {
         jLabel9 = new javax.swing.JLabel();
         jLabel10 = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
+        jButton5 = new javax.swing.JButton();
+        jButton6 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setMaximumSize(new java.awt.Dimension(652, 829));
@@ -119,35 +138,140 @@ public class Home extends javax.swing.JFrame {
         jLabel4.setText("Account Number :");
         getContentPane().add(jLabel4, new org.netbeans.lib.awtextra.AbsoluteConstraints(310, 170, 320, -1));
 
+        jButton5.setText("Reports");
+        jButton5.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton5ActionPerformed(evt);
+            }
+        });
+        getContentPane().add(jButton5, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 710, 100, 40));
+
+        jButton6.setText("Budget");
+        jButton6.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton6ActionPerformed(evt);
+            }
+        });
+        getContentPane().add(jButton6, new org.netbeans.lib.awtextra.AbsoluteConstraints(240, 710, 110, 40));
+
         pack();
     }// </editor-fold>//GEN-END:initComponents
+    public void loadData(){
+        
+           
+            DB db = new DB();
+            int userId = UserId ;
+            String sql = "SELECT * FROM login WHERE ID = ? ";
+        try {
+            Connection cn = db.getCon();
+            PreparedStatement pstmt = cn.prepareStatement(sql);
 
+            pstmt.setInt(1,UserId ); 
+
+            ResultSet rs = pstmt.executeQuery();
+
+            if (rs.next()) {
+
+                String name = rs.getString("Name");
+                String accnm = rs.getString("Account_number");
+                String balance = rs.getString("Balance");
+
+                // Display the name in a text field (assuming jTextField1 is the text field)
+                jLabel2.setText("Welcome back "+name);
+                jLabel4.setText("Account Number : "+accnm);
+                
+                if (balance != null) {
+                    jLabel8.setText("Rs." + balance);
+                    jLabel9.setText("Rs." + balance);
+                    jLabel10.setText("Rs." + balance);
+
+                    // Parse balance only if it's not null
+                    bal = Float.parseFloat(balance);
+                } else {
+                    // Handle the case where balance is null
+                    System.out.println("Balance is null for account: " + accnm);
+                }
+                
+
+            } else {
+                // If no row is found, the username or password is incorrect
+                System.out.println("Invalid Account Number");
+            }
+
+            // Close the ResultSet, PreparedStatement, and Connection
+            rs.close();
+            pstmt.close();
+            cn.close();
+            
+        }catch (SQLException ex) {
+            Logger.getLogger(Login.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         // TODO add your handling code here:
+        this.dispose();
+        Transactions t1 =  new Transactions(UserId);
+        t1.setVisible(true);
+        t1.setSize(652,868);
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
-        // TODO add your handling code here:
+            this.dispose();
+            Login l1 = new Login();
+            l1.setVisible(true);
+            l1.setSize(652,868);
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
         // TODO add your handling code here:
-        
+        this.hide();
+        Income i1 =  new Income(this);
+        i1.setVisible(true);
+        i1.setSize(652,868);
     }//GEN-LAST:event_jButton3ActionPerformed
 
     private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
         // TODO add your handling code here:
+        this.hide();
+        Expences e1 = new Expences(this);
+        e1.setVisible(true);
+        e1.setSize(652,868);
     }//GEN-LAST:event_jButton4ActionPerformed
+
+    private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed
+        // TODO add your handling code here:
+        this.hide();
+        Reports r1 = new Reports(this);
+        r1.setVisible(true);
+        r1.setSize(652,868);
+    }//GEN-LAST:event_jButton5ActionPerformed
+
+    private void jButton6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton6ActionPerformed
+        // TODO add your handling code here:
+        this.dispose();
+        Budget b1 = new Budget(this);
+        b1.setSize(600, 950);
+        b1.setVisible(true);
+    }//GEN-LAST:event_jButton6ActionPerformed
 
     /**
      * @param args the command line arguments
      */
+    
+    
+    public int getUserId() {
+        return UserId;
+    }
+    public float getbal() {
+        return bal;
+    }
+
     public static void main(String args[]) {
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
         /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
+        * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html
+        */
         try {
             for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
                 if ("Nimbus".equals(info.getName())) {
@@ -172,7 +296,7 @@ public class Home extends javax.swing.JFrame {
                 //new Home().setVisible(true);
                 Home h1 = new Home();
                 h1.setVisible(true);
-                h1.setSize(652,829);
+                h1.setSize(652,868);
             }
         });
     }
@@ -182,6 +306,8 @@ public class Home extends javax.swing.JFrame {
     private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;
     private javax.swing.JButton jButton4;
+    private javax.swing.JButton jButton5;
+    private javax.swing.JButton jButton6;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel2;
