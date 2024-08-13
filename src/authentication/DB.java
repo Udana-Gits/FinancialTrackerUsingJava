@@ -30,6 +30,7 @@ public class DB {
     }
     
     public boolean execute (String query){
+        
         boolean status =false;
 
         try {
